@@ -1,10 +1,12 @@
+#include "gui.h"
 #include "json_parser.h"
 #include "vault.h"
 #include <stdio.h>
 #include <stdlib.h> // <-- Necessário para malloc, free
 #include <string.h>
 
-int main() {
+int main(int argc, char *argv[]) {
+  start_gui(argc, argv);
   const char *filename = "vault.dat";
   const char *password = "minhasenhasecreta";
 
