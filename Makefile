@@ -9,6 +9,8 @@ SRC = src/main.c \
       src/gui_create_account.c \
 			src/gui_main_window.c \
 			src/gui_utils.c \
+			src/gui_generator.c \
+			src/generator.c \
 			src/crypto.c \
       src/vault.c \
 			src/json_parser.c \
