@@ -3,15 +3,17 @@
 #include "generator.h"
 #include "validator.h"
 #include "utils.h"
+#include "entropy.h"
+#include "breached.h"
 
 int main() {
+    printSplash();
     int opcao;
 
     do {
         printf("\n==== Secure Password CLI ====\n");
         printf("1. Generate Password\n");
-        printf("2. Validate Password Strength\n");
-        printf("3. Exit\n");
+        printf("2. Exit\n");
         printf("Choose an option: ");
         scanf("%d", &opcao);
         clearInputBuffer();
@@ -41,17 +43,30 @@ int main() {
             clearInputBuffer();
 
             generatePassword(length, upper, lower, digits, symbols, password);
-            printf("Generated Password: %s\n", password);
+            printf("\nGenerated Password: %s\n", password);
 
-        } else if (opcao == 2) {
-            char password[256];
-            printf("Enter password to validate: ");
-            fgets(password, sizeof(password), stdin);
-            password[strcspn(password, "\n")] = 0;
+            // Análise da senha gerada
             validatePassword(password);
+
+            // Verificar se a senha foi vazada
+            if (isPasswordBreached(password)) {
+                printf(RED "❌ This password appears in breached password databases!\n" RESET);
+            } else {
+                printf(GREEN "✔️ This password was not found in breach lists.\n" RESET);
+            }
+
+            // Calcular entropia
+            int poolSize = 0;
+            if (upper) poolSize += 26;
+            if (lower) poolSize += 26;
+            if (digits) poolSize += 10;
+            if (symbols) poolSize += 32;
+
+            double entropy = calculateEntropy(poolSize, length);
+            printEntropy(entropy);
         }
 
-    } while (opcao != 3);
+    } while (opcao != 2);
 
     printf("Goodbye!\n");
     return 0;
