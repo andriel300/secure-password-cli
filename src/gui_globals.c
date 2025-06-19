@@ -1,20 +1,20 @@
-#include "gui.h"
+#include "gui_globals.h"
 
-// Janela principal e container
-GtkWidget *window;
-GtkWidget *main_container;
+// Containers
+GtkWidget *main_container = NULL;
+GtkWidget *treeview = NULL;
 
-// Treeview
-GtkWidget *treeview;
+// Janelas
+GtkWidget *window = NULL;
 
 // Entradas
-GtkWidget *entry_username;
-GtkWidget *entry_password;
-GtkWidget *entry_confirm;
-GtkWidget *entry_login_username;
-GtkWidget *entry_login_password;
+GtkWidget *entry_username = NULL;
+GtkWidget *entry_password = NULL;
+GtkWidget *entry_confirm = NULL;
+GtkWidget *entry_login_username = NULL;
+GtkWidget *entry_login_password = NULL;
 
 // Dados do vault
 VaultData current_vault;
-char current_vault_file[256];
-char current_password[256];
+char current_vault_file[256] = {0};
+char current_password[256] = {0};
