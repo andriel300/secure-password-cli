@@ -1,74 +1,83 @@
+#include "json_parser.h"
+#include "vault.h"
 #include <stdio.h>
+#include <stdlib.h> // <-- Necessário para malloc, free
 #include <string.h>
-#include "generator.h"
-#include "validator.h"
-#include "utils.h"
-#include "entropy.h"
-#include "breached.h"
 
 int main() {
-    printSplash();
-    int opcao;
+  const char *filename = "vault.dat";
+  const char *password = "minhasenhasecreta";
 
-    do {
-        printf("\n==== Secure Password CLI ====\n");
-        printf("1. Generate Password\n");
-        printf("2. Exit\n");
-        printf("Choose an option: ");
-        scanf("%d", &opcao);
-        clearInputBuffer();
+  // Dados a serem salvos (simulação)
+  const char *data = "{ \"entries\": [ "
+                     "{ \"id\": 1, \"name\": \"GitHub\", \"username\": "
+                     "\"andriel\", \"password\": \"supersecreto\", \"url\": "
+                     "\"https://github.com\", \"notes\": \"repo login\" }"
+                     "] }";
 
-        if (opcao == 1) {
-            int length, upper, lower, digits, symbols;
-            char password[256];
+  // 🔐 Salvar no vault
+  if (save_vault(filename, password, (const unsigned char *)data,
+                 strlen(data))) {
+    printf("✅ Vault saved successfully!\n");
+  } else {
+    printf("❌ Failed to save vault.\n");
+  }
 
-            printf("Enter password length: ");
-            scanf("%d", &length);
-            clearInputBuffer();
+  // 🔓 Ler do vault
+  unsigned char output[4096];
+  int len = load_vault(filename, password, output, sizeof(output));
 
-            printf("Use uppercase? (1 = Yes, 0 = No): ");
-            scanf("%d", &upper);
-            clearInputBuffer();
+  if (len > 0) {
+    output[len] = '\0'; // Garantir null-terminated para string C
 
-            printf("Use lowercase? (1 = Yes, 0 = No): ");
-            scanf("%d", &lower);
-            clearInputBuffer();
+    // Parse JSON para estruturas C
+    VaultData vault;
+    if (load_entries((char *)output, &vault)) {
+      printf("✔️ Found %zu entries.\n", vault.count);
 
-            printf("Use digits? (1 = Yes, 0 = No): ");
-            scanf("%d", &digits);
-            clearInputBuffer();
+      // Loop pelas entradas
+      for (size_t i = 0; i < vault.count; i++) {
+        Entry *e = &vault.entries[i];
+        printf("🔑 [%d] %s - %s (%s)\n", e->id, e->name, e->username, e->url);
+      }
 
-            printf("Use symbols? (1 = Yes, 0 = No): ");
-            scanf("%d", &symbols);
-            clearInputBuffer();
+      free_vault(&vault); // Libera memória
+    } else {
+      printf("❌ Failed to parse vault data.\n");
+    }
+  } else {
+    printf("❌ Failed to open vault. Wrong password?\n");
+  }
+  VaultData vault;
+  // Cria uma nova entrada
+  Entry new_entry = {.id = 2,
+                     .name = "Gmail",
+                     .username = "andriel",
+                     .password = "senha123",
+                     .url = "https://gmail.com",
+                     .notes = "Email pessoal"};
+  add_entry(&vault, &new_entry);
 
-            generatePassword(length, upper, lower, digits, symbols, password);
-            printf("\nGenerated Password: %s\n", password);
+  // Deletar entrada
+  delete_entry(&vault, 1); // Remove entrada com id=1
 
-            // Análise da senha gerada
-            validatePassword(password);
+  // Editar entrada
+  Entry *e = find_entry(&vault, 2);
+  if (e) {
+    strcpy(e->password, "nova_senha_mega_segura");
+  }
 
-            // Verificar se a senha foi vazada
-            if (isPasswordBreached(password)) {
-                printf(RED "❌ This password appears in breached password databases!\n" RESET);
-            } else {
-                printf(GREEN "✔️ This password was not found in breach lists.\n" RESET);
-            }
+  // Salvar de volta no vault
+  char *new_json = save_entries_to_json(&vault);
 
-            // Calcular entropia
-            int poolSize = 0;
-            if (upper) poolSize += 26;
-            if (lower) poolSize += 26;
-            if (digits) poolSize += 10;
-            if (symbols) poolSize += 32;
+  if (save_vault(filename, password, (const unsigned char *)new_json,
+                 strlen(new_json))) {
+    printf("💾 Vault salvo com sucesso!\n");
+  } else {
+    printf("❌ Falha ao salvar vault.\n");
+  }
 
-            double entropy = calculateEntropy(poolSize, length);
-            printEntropy(entropy);
-        }
+  free(new_json);
 
-    } while (opcao != 2);
-
-    printf("Goodbye!\n");
-    return 0;
+  return 0;
 }
-
