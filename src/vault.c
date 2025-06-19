@@ -1,6 +1,7 @@
 #include "vault.h"
 #include "crypto.h"
 #include <openssl/rand.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,7 @@
 
 // Salvar vault criptografado no arquivo
 int save_vault(const char *filename, const char *password,
-               const unsigned char *plaintext, int plaintext_len) {
+               const unsigned char *plaintext, size_t plaintext_len) {
   FILE *file = fopen(filename, "wb");
   if (!file) {
     perror("Erro ao abrir o arquivo para escrita");
@@ -49,7 +50,7 @@ int save_vault(const char *filename, const char *password,
 
 // Carregar vault e descriptografar
 int load_vault(const char *filename, const char *password,
-               unsigned char *plaintext, int max_plaintext_len) {
+               unsigned char *plaintext, size_t max_plaintext_len) {
   FILE *file = fopen(filename, "rb");
   if (!file) {
     perror("Failed to open file for reading");
