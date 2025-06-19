@@ -1,18 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Iinclude
+CFLAGS = -Wall -Iinclude -IcJSON
+LDFLAGS = -lssl -lcrypto
 
-SRC = src/main.c src/generator.c src/validator.c src/utils.c src/breached.c src/entropy.c
+SRC = src/main.c src/crypto.c src/vault.c src/json_parser.c cJSON/cJSON.c
 OUT = secure-password-cli
 
-ifeq ($(OS),Windows_NT)
-    OUT := secure-password-cli.exe
-endif
-
 all:
-	$(CC) $(CFLAGS) $(SRC) -o $(OUT) -lm
+	$(CC) $(CFLAGS) $(SRC) -o $(OUT) $(LDFLAGS)
 
 run: all
 	./$(OUT)
 
 clean:
-	rm -f $(OUT)
+	rm -f $(OUT) vault.dat
+
