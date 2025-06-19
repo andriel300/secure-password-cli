@@ -1,5 +1,7 @@
 # 📜 Documentação do Projeto — **Secure Password CLI GUI**
+## Demo
 
+![Demo](./bin/demo.gif)
 ## 🔐 Sobre o Projeto
 **Secure Password CLI GUI** é um gerenciador de senhas simples, seguro e de código aberto. Com interface gráfica baseada em GTK, permite criar, salvar, desbloquear e gerenciar senhas locais em um vault criptografado usando **AES + PBKDF2 com OpenSSL**.
 
