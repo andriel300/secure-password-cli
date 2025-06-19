@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "validator.h"
+#include "utils.h"
 
 void validatePassword(const char *password) {
     int length = strlen(password);
@@ -24,11 +25,11 @@ void validatePassword(const char *password) {
     int score = hasUpper + hasLower + hasDigit + hasSymbol;
 
     if (length >= 12 && score >= 3) {
-        printf("✔️ Password Strength: STRONG\n");
+        printf(GREEN "✔️ Password Strength: STRONG\n" RESET);
     } else if (length >= 8 && score >= 2) {
-        printf("✔️ Password Strength: MEDIUM\n");
+        printf(YELLOW "✔️ Password Strength: MEDIUM\n" RESET);
     } else {
-        printf("❌ Password Strength: WEAK\n");
+        printf(RED "❌ Password Strength: WEAK\n" RESET);
     }
 }
 
