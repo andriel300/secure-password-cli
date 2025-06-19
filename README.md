@@ -1,25 +1,43 @@
-# 🔐 Secure Password CLI
+# 📜 Documentação do Projeto — **Secure Password CLI GUI**
 
-A secure password generator and strength validator written in C. Create strong passwords and evaluate their strength directly from your terminal.
+## 🔐 Sobre o Projeto
+**Secure Password CLI GUI** é um gerenciador de senhas simples, seguro e de código aberto. Com interface gráfica baseada em GTK, permite criar, salvar, desbloquear e gerenciar senhas locais em um vault criptografado usando **AES + PBKDF2 com OpenSSL**.
 
-## 🚀 Features
+O projeto é construído em **C** com foco em aprendizado, segurança e simplicidade, e é uma evolução do projeto anterior em linha de comando (CLI), agora com interface gráfica (GUI).
 
-- Generate strong passwords
-- Validate the strength of existing passwords
-- Supports customization: length, use of uppercase, lowercase, digits, symbols
-- CLI-based
+## 🏗️ Tecnologias Utilizadas
+- Linguagem C
+- GTK+ 3
+- OpenSSL
+- cJSON
 
-## 🛠️ Technologies
+## 🚀 Funcionalidades
+- 🔐 Criar vault criptografado
+- 🔓 Desbloquear vault existente
+- ➕ Adicionar entradas (nome, usuário, senha, URL, observações)
+- ✏️ Editar entradas
+- 🗑️ Excluir entradas
+- 💾 Salvar vault criptografado localmente
 
-- C Language
-- Makefile
+## 📂 Estrutura de Pastas
+```
+.
+├── src/                # Código fonte C
+├── include/            # Arquivos de header (.h)
+├── cJSON/              # Biblioteca de parser JSON
+├── Makefile            # Script de build
+├── README.md           # Documentação
+└── CONTRIBUTING.md     # Guia para contribuidores
+```
 
-## 📦 Installation
-
+## 🏃‍♂️ Como Executar
 ```bash
-git clone https://github.com/SEU_USUARIO/secure-password-cli.git
-cd secure-password-cli
+sudo apt install libgtk-3-dev libssl-dev
 make
 ./secure-password-cli
-
 ```
+
+## ❤️ Agradecimentos
+Este projeto é uma oportunidade de aprendizado em desenvolvimento seguro e construção de interfaces gráficas com C.
+
+---
