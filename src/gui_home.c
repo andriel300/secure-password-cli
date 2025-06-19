@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "gui_generator.h"
 
 void show_home_screen() {
   clear_main_container();

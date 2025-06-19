@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "gui_generator.h"
 
 void show_main_screen() {
   clear_main_container();
@@ -53,6 +54,12 @@ void show_main_screen() {
   GtkWidget *logout_btn = gtk_button_new_with_label("🔒 Logout");
   g_signal_connect(logout_btn, "clicked", G_CALLBACK(on_logout), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), logout_btn, FALSE, FALSE, 0);
+
+  GtkWidget *btn_password_generator =
+      gtk_button_new_with_label("🔐 Gerador de Senha");
+  g_signal_connect(btn_password_generator, "clicked",
+                   G_CALLBACK(show_password_generator), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), btn_password_generator, FALSE, FALSE, 0);
 
   load_treeview_from_vault();
 
