@@ -1,102 +1,67 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
+
+REM 🔗 Variáveis
+set REPO_URL=https://github.com/andriel300/secure-password-cli
+set REPO_DIR=%USERPROFILE%\secure-password-cli
+set INSTALL_DIR=%USERPROFILE%\AppData\Local\SecurePasswordCLI
+set BIN_DIR=%INSTALL_DIR%\bin
+set APP_NAME=secure-password-cli
+set ICON=%INSTALL_DIR%\assets\icon-transparent-bg.ico
 
 echo 🔐 Installing Secure Password CLI for Windows...
 
-:: ========================
-:: 📦 Configurações
-:: ========================
-set "REPO=https://github.com/andriel300/secure-password-cli"
-set "REPO_DIR=%USERPROFILE%\SecurePasswordCLI"
-set "INSTALL_DIR=%USERPROFILE%\AppData\Local\SecurePasswordCLI"
-set "BIN_DIR=%INSTALL_DIR%\bin"
-set "APP_NAME=secure-password-cli"
-
-:: ========================
-:: 🔍 Verificar dependências
-:: ========================
-where git >nul 2>nul
-if errorlevel 1 (
-    echo ❌ Git not found. Please install Git for Windows from https://git-scm.com/download/win
-    pause
-    exit /b
-)
-
-where gcc >nul 2>nul
-if errorlevel 1 (
-    echo ❌ GCC not found. Please install MinGW-w64 from https://www.mingw-w64.org/
-    pause
-    exit /b
-)
-
-:: ========================
-:: 📥 Clonar ou atualizar repositório
-:: ========================
+REM 📥 Clonar o repositório
 if not exist "%REPO_DIR%" (
     echo 📥 Cloning repository...
-    git clone "%REPO%" "%REPO_DIR%"
+    git clone %REPO_URL% "%REPO_DIR%"
 ) else (
-    echo 🔄 Repository exists. Pulling latest changes...
+    echo 🔄 Repository already exists. Pulling latest changes...
     cd /d "%REPO_DIR%"
     git pull
 )
 
-:: ========================
-:: ✔️ Criar diretórios
-:: ========================
-echo 📦 Creating install directories...
-mkdir "%INSTALL_DIR%" >nul 2>nul
-mkdir "%BIN_DIR%" >nul 2>nul
+cd /d "%REPO_DIR%"
 
-:: ========================
-:: 📦 Copiar arquivos
-:: ========================
+REM ✔️ Criar diretórios
+if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
+if not exist "%BIN_DIR%" mkdir "%BIN_DIR%"
+
+REM 📦 Copiar arquivos
 echo 📦 Copying project files...
-xcopy "%REPO_DIR%\*" "%INSTALL_DIR%\" /E /I /Y /EXCLUDE:exclude.txt >nul
+robocopy . "%INSTALL_DIR%" /MIR /XD build /XF *.o *.out *.log /NFL /NDL /NJH /NJS /nc /ns /np
 
-:: ========================
-:: ⚙️ Compilar
-:: ========================
+cd /d "%INSTALL_DIR%"
+
+REM ⚙️ Compilar
 echo ⚙️ Compiling...
-cd /D "%INSTALL_DIR%"
-if exist "%BIN_DIR%\%APP_NAME%.exe" del "%BIN_DIR%\%APP_NAME%.exe"
+
+if exist "%BIN_DIR%\%APP_NAME%.exe" (
+    del "%BIN_DIR%\%APP_NAME%.exe"
+)
 
 gcc -Wall -Iinclude src\*.c cJSON\cJSON.c -o bin\%APP_NAME%.exe -lssl -lcrypto -mwindows
 
-if not exist "bin\%APP_NAME%.exe" (
-    echo ❌ Compilation failed.
+if %errorlevel% neq 0 (
+    echo ❌ Compilation failed. Make sure MinGW-w64 and OpenSSL are installed.
     pause
     exit /b
 )
 
-:: ========================
-:: 🔗 Adicionar ao PATH (se não estiver)
-:: ========================
-echo 🔗 Adding to PATH...
-echo %PATH% | find /I "%BIN_DIR%" >nul
-if errorlevel 1 (
-    setx PATH "%PATH%;%BIN_DIR%"
-    echo ✅ Added %BIN_DIR% to PATH.
-) else (
-    echo ℹ️ PATH already contains %BIN_DIR%.
-)
+REM ✔️ Adicionar ao PATH
+set PATH=%PATH%;%BIN_DIR%
+setx PATH "%PATH%"
 
-:: ========================
-:: 🖥️ Criar atalho na Área de Trabalho
-:: ========================
-echo 🖥️ Creating desktop shortcut...
+REM 📄 Criar atalho na área de trabalho
+echo 📄 Creating desktop shortcut...
 powershell -Command ^
- "$s=(New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\SecurePasswordCLI.lnk'); ^
- $s.TargetPath='%BIN_DIR%\%APP_NAME%.exe'; ^
- $s.IconLocation='%BIN_DIR%\%APP_NAME%.exe'; ^
- $s.Save()"
+ "$s = (New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\SecurePasswordCLI.lnk'); ^
+  $s.TargetPath = '%BIN_DIR%\%APP_NAME%.exe'; ^
+  $s.IconLocation = '%ICON%'; ^
+  $s.Save()"
 
-:: ========================
-:: ✅ Concluído
-:: ========================
 echo.
 echo ✅ Installed successfully!
-echo ➡️ Run it from the Desktop or by typing: %APP_NAME%
+echo 🚀 Run it from the Desktop or terminal with: %APP_NAME%
 pause
-exit /b
 
