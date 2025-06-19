@@ -3,21 +3,18 @@
 int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
 
-  // Criar janela principal
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(window), "🔐 Secure Password CLI");
-  gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+  gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-  // Criar container principal
-  main_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  main_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(window), main_container);
 
   show_home_screen();
 
   gtk_widget_show_all(window);
   gtk_main();
-
   return 0;
 }
