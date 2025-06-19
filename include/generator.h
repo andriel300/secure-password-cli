@@ -1,7 +1,5 @@
-#ifndef GENERATOR_H
-#define GENERATOR_H
+#pragma once
 
-void generatePassword(int length, int useUpper, int useLower, int useDigits, int useSymbols, char *output);
-
-#endif
-
+char *generate_password(int length, int use_upper, int use_lower,
+                        int use_numbers, int use_symbols, int min_numbers,
+                        int min_symbols);
