@@ -1,0 +1,127 @@
+/* 🌙 Tema Dark Bonito e Moderno */
+
+/* Fundo da janela */
+window {
+  background-color: #121212;
+  color: #ffffff;
+  border-radius: 12px;
+}
+
+/* Frames */
+frame {
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+/* Labels */
+label {
+  color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* Checkboxes */
+checkbutton {
+  color: #e0e0e0;
+}
+
+/* Scale (slider) */
+scale trough {
+  background-color: #333333;
+  border-radius: 8px;
+}
+
+scale slider {
+  background-color: #2196f3;
+  border-radius: 50%;
+}
+
+/* Spin buttons */
+spinbutton {
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #444444;
+  border-radius: 8px;
+}
+
+/* Entry (campo de senha) */
+entry {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #3c3c3c;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+/* Progress bar base */
+progressbar {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+}
+
+/* Trough da barra */
+progressbar trough {
+  background-color: #333333;
+  border-radius: 8px;
+}
+
+/* Barra de progresso interna */
+progressbar progress {
+  background-color: #2196f3;
+  border-radius: 8px;
+}
+
+/* 🎨 Cores dinâmicas da força da senha */
+progressbar.fraca progress {
+  background-color: #f44336;
+  /* Vermelho */
+}
+
+progressbar.media progress {
+  background-color: #ffc107;
+  /* Amarelo */
+}
+
+progressbar.forte progress {
+  background-color: #4caf50;
+  /* Verde */
+}
+
+progressbar.excelente progress {
+  background-color: #2196f3;
+  /* Azul */
+}
+
+/* Botões */
+button {
+  background-color: #1f1f1f;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  border: 1px solid #3c3c3c;
+}
+
+button:hover {
+  background-color: #333333;
+}
+
+button:active {
+  background-color: #555555;
+}
+
+/* Bottom navigation */
+button.nav {
+  background-color: #181818;
+  border: 1px solid #333333;
+}
+
+button.nav:hover {
+  background-color: #303030;
+}
+
+/* Tooltip */
+tooltip {
+  background-color: #333333;
+  color: white;
+}
