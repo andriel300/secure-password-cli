@@ -1,21 +1,23 @@
 #pragma once
-#include "vault.h" // ✅ Inclui a definição de Entry
+#include "vault.h" //
 #include <gtk/gtk.h>
 
-// 🔃 Atualiza TreeView
+// 🔃 Atualiza o TreeView com os dados do current_vault
 void reload_vault_treeview(void);
 
-// ➕ Adicionar
+// ➕ Adicionar uma nova entrada
 void on_add_entry(GtkButton *button, gpointer user_data);
 
-// ✏️ Editar
+// ✏️ Editar uma entrada selecionada
 void on_edit_entry(GtkButton *button, gpointer user_data);
 
-// ❌ Deletar
+// ❌ Deletar uma entrada selecionada
 void on_delete_entry(GtkButton *button, gpointer user_data);
 
-// 💾 Salvar Vault
+// 💾 Salvar o vault criptografado no disco
 void on_save_vault(GtkButton *button, gpointer user_data);
 
-// 🔥 Popup de Edição Profissional
+// 🔥 Abre o popup de edição (usado tanto para adicionar quanto editar)
+// Se 'entry' for NULL → cria uma nova entrada
+// Se 'entry' não for NULL → edita a entrada existente
 void open_edit_entry_dialog(Entry *entry);
