@@ -1,7 +1,28 @@
 #include "gui.h"
+#include "gui_utils.h"
+
+void load_css() {
+  GtkCssProvider *provider = gtk_css_provider_new();
+  GdkDisplay *display = gdk_display_get_default();
+  GdkScreen *screen = gdk_display_get_default_screen(display);
+
+  const char *css_file = get_css_path();
+  if (!css_file) {
+    g_warning(
+        "❌ CSS não encontrado. O aplicativo continuará sem estilização.");
+    return;
+  }
+
+  gtk_css_provider_load_from_path(provider, css_file, NULL);
+
+  gtk_style_context_add_provider_for_screen(
+      screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+}
 
 int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
+
+  load_css(); // ✔️ Carregar o CSS logo após inicializar o GTK
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(window), "🔐 Secure Password CLI");
