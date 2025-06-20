@@ -5,8 +5,6 @@
 
 // Containers
 extern GtkWidget *main_container;
-extern GtkWidget *treeview;
-
 // Janelas
 extern GtkWidget *window;
 
@@ -19,5 +17,7 @@ extern GtkWidget *entry_login_password;
 
 // Dados do vault
 extern VaultData current_vault;
+extern GtkWidget *vault_treeview;
+extern GtkListStore *vault_list_store;
 extern char current_vault_file[256];
 extern char current_password[256];
