@@ -1,8 +1,7 @@
 #include "gui.h"
+#include "gui_globals.h"
 
 // Widgets globais
-GtkWidget *vault_treeview;
-GtkListStore *vault_list_store;
 
 // Cria a interface da aba Vault
 GtkWidget *create_vault_page() {
@@ -20,16 +19,12 @@ GtkWidget *create_vault_page() {
     gtk_tree_view_append_column(GTK_TREE_VIEW(vault_treeview), column);
   }
 
-  // 🔥 Cria o ListStore global
-  vault_list_store = gtk_list_store_new(6,
-                                        G_TYPE_INT,    // ID
-                                        G_TYPE_STRING, // Nome
-                                        G_TYPE_STRING, // Usuário
-                                        G_TYPE_STRING, // Senha
-                                        G_TYPE_STRING, // URL
-                                        G_TYPE_STRING  // Notas
-  );
+  // Cria o modelo
+  vault_list_store =
+      gtk_list_store_new(6, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING,
+                         G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
+  // Define o modelo no TreeView
   gtk_tree_view_set_model(GTK_TREE_VIEW(vault_treeview),
                           GTK_TREE_MODEL(vault_list_store));
 
