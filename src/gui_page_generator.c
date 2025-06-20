@@ -1,6 +1,7 @@
 #include "generator.h"
 #include "gui.h"
 #include "gui_globals.h"
+#include <math.h>
 
 // Widgets globais
 GtkWidget *scale_length;
@@ -10,11 +11,45 @@ GtkWidget *check_numbers;
 GtkWidget *check_symbols;
 GtkWidget *spin_numbers;
 GtkWidget *spin_symbols;
+GtkWidget *progress_strength;
 
-// 🔑 Gerar Senha
+// 🔢 Calcular Entropia
+double calculate_entropy(int length, gboolean use_upper, gboolean use_lower,
+                         gboolean use_numbers, gboolean use_symbols) {
+  int pool = 0;
+
+  if (use_upper)
+    pool += 26;
+  if (use_lower)
+    pool += 26;
+  if (use_numbers)
+    pool += 10;
+  if (use_symbols)
+    pool += 32; // Ajuste conforme seus símbolos suportados
+
+  if (pool == 0 || length == 0)
+    return 0.0;
+
+  double entropy = log2(pool) * length;
+  return entropy;
+}
+
+// 🔑 Gerar senha
 void on_generate_password(GtkButton *button, gpointer user_data) {
   int length = (int)gtk_range_get_value(GTK_RANGE(scale_length));
 
+  // Reset da barra
+  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress_strength), 0.0);
+  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength), "");
+
+  // Remove classes CSS anteriores
+  GtkStyleContext *context = gtk_widget_get_style_context(progress_strength);
+  gtk_style_context_remove_class(context, "fraca");
+  gtk_style_context_remove_class(context, "media");
+  gtk_style_context_remove_class(context, "forte");
+  gtk_style_context_remove_class(context, "excelente");
+
+  // Obter estados dos checkboxes
   gboolean use_upper =
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_upper));
   gboolean use_lower =
@@ -29,32 +64,61 @@ void on_generate_password(GtkButton *button, gpointer user_data) {
   int min_symbols =
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin_symbols));
 
-  // 🔥 Validação: Se checkbox desmarcado, mínimo zera
+  // Validações
   if (!use_numbers)
     min_numbers = 0;
   if (!use_symbols)
     min_symbols = 0;
 
-  // 🚫 Validação: Pelo menos um charset selecionado
   if (!use_upper && !use_lower && !use_numbers && !use_symbols) {
     gtk_entry_set_text(GTK_ENTRY(entry_password),
                        "❌ Nenhum charset selecionado.");
     return;
   }
 
-  // 🚫 Validação: Comprimento suficiente
   if (length < (min_numbers + min_symbols)) {
     gtk_entry_set_text(GTK_ENTRY(entry_password),
                        "❌ Comprimento insuficiente.");
     return;
   }
 
-  // ✅ Gerar
+  // Gerar senha
   char *password = generate_password(length, use_upper, use_lower, use_numbers,
                                      use_symbols, min_numbers, min_symbols);
 
   if (password) {
     gtk_entry_set_text(GTK_ENTRY(entry_password), password);
+
+    // 🔥 Calcular entropia
+    double entropy = calculate_entropy(length, use_upper, use_lower,
+                                       use_numbers, use_symbols);
+
+    // 🔥 Atualizar barra com base na entropia
+    double fraction = entropy / 128.0;
+    if (fraction > 1.0)
+      fraction = 1.0;
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress_strength),
+                                  fraction);
+
+    if (entropy < 28) {
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength),
+                                "Muito Fraca");
+      gtk_style_context_add_class(context, "fraca");
+    } else if (entropy < 36) {
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength), "Fraca");
+      gtk_style_context_add_class(context, "fraca");
+    } else if (entropy < 60) {
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength), "Média");
+      gtk_style_context_add_class(context, "media");
+    } else if (entropy < 128) {
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength), "Forte");
+      gtk_style_context_add_class(context, "forte");
+    } else {
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_strength),
+                                "Excelente");
+      gtk_style_context_add_class(context, "excelente");
+    }
+
     free(password);
   } else {
     gtk_entry_set_text(GTK_ENTRY(entry_password), "❌ Erro ao gerar senha.");
@@ -80,25 +144,23 @@ void on_copy_password(GtkButton *button, gpointer user_data) {
 
 // 🎨 Criar página Generator
 GtkWidget *create_generator_page() {
-  // 🔲 Container principal para centralizar
+  // 🔲 Container principal
   GtkWidget *outer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_halign(outer_box, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(outer_box, GTK_ALIGN_CENTER);
 
-  // 🔳 Frame limitador do tamanho
+  // 🔳 Frame
   GtkWidget *frame = gtk_frame_new(NULL);
   gtk_box_pack_start(GTK_BOX(outer_box), frame, TRUE, TRUE, 20);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
-  // 🔳 VBox interno
+  // 🔳 VBox
   GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 16);
   gtk_container_add(GTK_CONTAINER(frame), vbox);
-
-  // 🔒 Limita o tamanho máximo (largura x altura)
   gtk_widget_set_size_request(vbox, 600, -1);
 
-  // 📏 Comprimento da Senha
+  // 📏 Comprimento
   GtkWidget *label_length = gtk_label_new("Comprimento da Senha:");
   gtk_widget_set_halign(label_length, GTK_ALIGN_START);
   gtk_box_pack_start(GTK_BOX(vbox), label_length, FALSE, FALSE, 0);
@@ -107,7 +169,7 @@ GtkWidget *create_generator_page() {
   gtk_range_set_value(GTK_RANGE(scale_length), 16);
   gtk_box_pack_start(GTK_BOX(vbox), scale_length, FALSE, FALSE, 0);
 
-  // 🔤 Frame - Caracteres Permitidos
+  // 🔤 Caracteres permitidos
   GtkWidget *frame_charset = gtk_frame_new("Caracteres Permitidos");
   gtk_box_pack_start(GTK_BOX(vbox), frame_charset, FALSE, FALSE, 0);
 
@@ -130,7 +192,7 @@ GtkWidget *create_generator_page() {
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_symbols), TRUE);
   gtk_box_pack_start(GTK_BOX(vbox_charset), check_symbols, FALSE, FALSE, 0);
 
-  // 🔢 Grid - Mínimos
+  // 🔢 Mínimos
   GtkWidget *grid_min = gtk_grid_new();
   gtk_grid_set_row_spacing(GTK_GRID(grid_min), 8);
   gtk_grid_set_column_spacing(GTK_GRID(grid_min), 12);
@@ -152,7 +214,13 @@ GtkWidget *create_generator_page() {
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_symbols), 1);
   gtk_grid_attach(GTK_GRID(grid_min), spin_symbols, 1, 1, 1, 1);
 
-  // 🧠 Output - Senha
+  // 🔥 Barra de força
+  progress_strength = gtk_progress_bar_new();
+  gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(progress_strength), TRUE);
+  gtk_widget_set_hexpand(progress_strength, TRUE);
+  gtk_box_pack_start(GTK_BOX(vbox), progress_strength, FALSE, FALSE, 0);
+
+  // 🧠 Output
   entry_password = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(entry_password), 128);
   gtk_editable_set_editable(GTK_EDITABLE(entry_password), FALSE);
