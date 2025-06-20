@@ -29,6 +29,7 @@ void show_main_screen() {
   GtkWidget *footer = create_footer();
   gtk_box_pack_end(GTK_BOX(vbox), footer, FALSE, FALSE, 5);
 
+  reload_vault_treeview();
   gtk_widget_show_all(main_container);
 }
 
