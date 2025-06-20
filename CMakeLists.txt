@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(SecurePasswordCLI VERSION 1.0.0)
+project(SecurePasswordCLI VERSION 0.1.1)
 
 # ✅ Version suffix (change this to "", "-beta", "-rc1" or whatever you want)
 set(VERSION_SUFFIX "-beta")
@@ -65,9 +65,9 @@ add_executable(SecurePasswordCLI ${SOURCES})
 
 # 🔗 Linking
 if (WIN32)
-    target_link_libraries(SecurePasswordCLI -lgtk-3 -lssl -lcrypto)
+    target_link_libraries(SecurePasswordCLI -lgtk-3 -lssl -lcrypto m)
 elseif (APPLE OR UNIX)
-    target_link_libraries(SecurePasswordCLI ${GTK3_LIBRARIES} ssl crypto)
+    target_link_libraries(SecurePasswordCLI ${GTK3_LIBRARIES} ssl crypto m)
 endif()
 
 # 📂 Installation
@@ -101,26 +101,6 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgtk-3-0, libssl3")
 # 🐧 RPM
 set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_RPM_PACKAGE_GROUP "Utility")
-
-# Windows (NSIS)
-if (WIN32)
-    set(CPACK_GENERATOR "NSIS;ZIP;TGZ")
-    set(CPACK_NSIS_DISPLAY_NAME "Secure Password CLI")
-    set(CPACK_NSIS_PACKAGE_NAME "SecurePasswordCLI")
-    set(CPACK_NSIS_CONTACT "andrieldata@proton.me")
-    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\SecurePasswordCLI.exe")
-    set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/assets/icon-transparent-bg.ico")
-    set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/assets/icon-transparent-bg.ico")
-    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
-endif()
-
-# macOS (DMG)
-if (APPLE)
-    set(CPACK_GENERATOR "DragNDrop;ZIP;TGZ")
-    set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_SOURCE_DIR}/assets/dmg-background.png")
-    set(CPACK_DMG_VOLUME_NAME "SecurePasswordCLI")
-endif()
 
 # Linux default
 if (UNIX AND NOT APPLE)
