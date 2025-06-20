@@ -2,7 +2,6 @@
 
 // Containers
 GtkWidget *main_container = NULL;
-GtkWidget *treeview = NULL;
 
 // Janelas
 GtkWidget *window = NULL;
@@ -16,5 +15,7 @@ GtkWidget *entry_login_password = NULL;
 
 // Dados do vault
 VaultData current_vault;
+GtkWidget *vault_treeview = NULL;
+GtkListStore *vault_list_store = NULL;
 char current_vault_file[256] = {0};
 char current_password[256] = {0};
